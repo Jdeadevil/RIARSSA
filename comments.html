@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>RSS Feed App</title>
+		<link href="mainstyle.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="js/jquery-2.2.3.min.js"></script>
+		<script type="text/javascript" src="js/functions.js"></script>
+
+		<script type="text/javascript">
+
+		var commentsUpFlag = false;
+		rssId = getUrlParameter("rssid");
+		userId = getUrlParameter("userid");
+
+//https://api.jquery.com/jQuery.parseXML/
+
+		//FUNCTION TO PARSE RSS FEED --------------------------------------------------------------
+		function getFeed (rsscontent) {
+			
+			var xml = rsscontent;
+			 xmlDoc = $.parseXML( xml ),
+			 $xml = $( xmlDoc ),
+			 $channel = $xml.find( "channel" );
+			 $channel.children().each(function() {
+
+			 	if($(this).prop("tagName")=="title") {
+					htmlString = "<div class='rsstitle'>";
+					htmlString+= "<h1>" + $(this).text() + "</h1>";
+					htmlString += "</div>";
+			 		$("main").append(htmlString);
+			 	}
+
+			 	if($(this).prop("tagName")=="item") {
+
+					htmlString = "<div class='rssitem'>";
+			 		$(this).children().each(function() {
+
+						
+			 			if($(this).prop("tagName")=="title") {
+			 				htmlString+= "<h1>" + $(this).text() + "</h1>";
+			 			}
+			 			if($(this).prop("tagName")=="description") {
+			 				htmlString+= "<p>" + $(this).text() + "</p>";
+			 			}
+			 			if($(this).prop("tagName")=="link") {
+			 				htmlString+= "<a href='" + $(this).text() + "'>Link</a>";
+			 			}
+			 		});
+			 		
+			 		htmlString += "</div>";
+
+			 		$("main").append(htmlString);
+			 	}
+
+			 });
+		}
+
+		//DOCUMENT READY EVENT HANDLER =========================================================
+		$(document).ready(function() {
+			//RSS fEED RETRIEVER --------------------------------------------------------------
+			
+			$.ajax({
+				beforeSend: function() {
+					$("#loading").show();
+				},
+				complete: function() {
+					$("#loading").hide();
+				},
+				type: 'GET',
+				dataType: "jsonp",
+				jsonp: "callback",
+				url: "http://ria.detritusdesign.co.uk/mng_feed.php?rssid=" + rssId,
+				success: function(data) {
+
+					responseString="";
+					$.each(data, function (index, item) {
+				    // Use item in here
+					    responseString = item;
+					});
+
+					getFeed(responseString);
+
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+						if (jqXHR.status == 500) {
+			                $("#messages").html('Internal error: ' + jqXHR.responseText);
+			            } else {
+			                $("#messages").html('Unexpected error.');
+			            }
+					}
+				});
+
+			//COMMENTS CONTAINER HEIGHT ANIMATION -----------------------------------------
+			$( "#commentslink" ).click(function() {
+
+				if(commentsUpFlag) { 
+
+				  	$("#commentscontainer").animate({
+				    	bottom: "-400"
+				  	}, 500, function() {
+				    	commentsUpFlag = false;
+				  	});
+
+				} else {
+				  	$("#commentscontainer").animate({
+				    	bottom: "0"
+				  	}, 500, function() {
+				    	commentsUpFlag = true;
+				  	});
+				}
+				return false;
+			});
+
+			//COMMENT RETRIEVAL -----------------------------------------
+			selectComments();
+
+			});
+			
+			//COMMENT RETRIEVAL FUNCTION ---------------------------------------------------
+			function selectComments() {
+
+			$("#comcontent").html("");
+
+			$.ajax({
+				beforeSend: function() {
+					$("#loading").show();
+				},
+				complete: function() {
+					$("#loading").hide();
+				},
+				type: 'GET',
+				dataType: "jsonp",
+				jsonp: "callback",
+				url: "http://ria.detritusdesign.co.uk/mng_comment.php?action=select&user_id=" + userId + "&rss_id=" + rssId,
+				success: function(data) {
+
+					responseString="";
+
+					$.each(data, function (index, item) {
+					    // Use item in here
+					    responseString = item;
+					});
+
+					$("#comcontent").html(responseString);
+
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+					if (jqXHR.status == 500) {
+		                $("#messages").html('Internal error: ' + jqXHR.responseText);
+		            } else {
+		                $("#messages").html('Unexpected error.');
+		            }
+				}
+			});
+
+
+
+		}
+
+		</script>
+
+	</head>
+
+	<body>
+
+		<header>
+				RSS Feed App
+		</header>
+
+		<main>
+			<div id="messages">
+
+			</div>
+
+		</main>
+
+		<footer>
+				Welcome
+		</footer>
+
+		<div id="commentscontainer">
+				<a href="#" id="commentslink">Comments</a>
+				<div id="comcontent">
+
+				</div>
+		</div>
+
+		<img src="images/loading.gif" id="loading" />
+
+	</body>
+</html>
