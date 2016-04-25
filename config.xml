@@ -5,6 +5,8 @@
         version     = "1.0.0" >
 
     <!-- versionCode is optional and Android only -->
+    <gap:plugin name="com.indigoway.cordova.whitelist.whitelistplugin" />
+    <access origin="http://*" />
     <access origin="*" />
 
     <name>RIA RSS</name>
