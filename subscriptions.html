@@ -5,7 +5,15 @@
 		<!-- look here: http://stackoverflow.com/questions/30212306/no-content-security-policy-meta-tag-found-error-in-my-phonegap-application -->
 		<meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; script-src * 'unsafe-inline';">
 		<meta charset="utf-8">
-		<title>RSS Feed App - Subscriptions</title>
+        
+        <!-- Responsive Focus -->
+        <meta name="viewport" content="initial-scale=1">
+        
+		<title>RSS Bro</title>
+        
+        <!-- Google Font: Raleway -->
+        <link href='https://fonts.googleapis.com/css?family=Raleway:400,500' rel='stylesheet' type='text/css'>
+        
 		<link href="mainstyle.css" rel="stylesheet" type="text/css" />
 		<script type="text/javascript" src="js/jquery-2.2.3.min.js"></script>
 		<script type="text/javascript" src="js/functions.js"></script>
@@ -34,7 +42,7 @@
 					type: 'GET',
 					dataType: "jsonp",
 					jsonp: "callback",
-					url: "http://ria.detritusdesign.co.uk/mng_subscription.php?action=" + action + "&user_id=" + userid + "&rss_id=" + rssid,
+					url: "http://79.170.44.136/jonoportfolio.com/RIA/mng_subscription.php?action=" + action + "&user_id=" + userid + "&rss_id=" + rssid,
 					success: function(data) {
 
 						responseString="";
@@ -95,7 +103,7 @@
 				type: 'GET',
 				dataType: "jsonp",
 				jsonp: "callback",
-				url: "http://ria.detritusdesign.co.uk/mng_subscription.php?action=select&user_id=" + userid,
+				url: "http://79.170.44.136/jonoportfolio.com/RIA/mng_subscription.php?action=select&user_id=" + userid,
 				success: function(data) {
 
 					responseString="";
